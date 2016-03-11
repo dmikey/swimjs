@@ -64,39 +64,42 @@ boilerplate.
 
 ```html
 <!DOCTYPE html>
-<html ng-app="chat">
+<html ng-app="todo">
   <head>
     <meta charset="UTF-8">
-    <title>Chat</title>
+    <title>To-Do</title>
   </head>
-  <body ng-controller="ChatRoom">
-    <h1>Chat</h1>
+  <body ng-controller="TodoList">
+    <h1>To-Do</h1>
     <ul>
-      <li ng-repeat="message in messages.state">
-        <strong>{{message.time | date:'h:mm:ss a'}}</strong>
-        <span>{{message.text}}</span>
+      <li ng-repeat="item in items.state">
+        <input type="checkbox" ng-model="item.checked" ng-change="check($index)"/>
+        <span>{{item.item}}</span>
       </li>
     </ul>
-    <form ng-submit="post()">
-      <input type="text" placeholder="Message" ng-model="newMessage"/>
-      <input type="submit" value="Post"/>
+    <form ng-submit="add()">
+      <input type="text" placeholder="To-Do" ng-model="newItem"/>
+      <input type="submit" value="Add"/>
     </form>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
     <script src="https://repo.swim.it/swim/recon-0.3.9.js"></script>
     <script src="https://repo.swim.it/swim/swim-client-0.4.5.js"></script>
     <script>
-      var app = angular.module('chat', []);
-      app.controller('ChatRoom', function ($scope) {
-        $scope.messages = swim.downlink()
-          .node('ws://localhost:5619/chat/public')
-          .lane('chat/room')
+      var app = angular.module('todo', []);
+      app.controller('TodoList', function ($scope) {
+        $scope.items = swim.downlink()
+          .node('ws://localhost:5619/todo/grocery')
+          .lane('todo/list')
           .onEvent(function (message) {
             $scope.$apply(); // Update the view.
           })
           .syncList();
-        $scope.post = function () {
-          $scope.messages.command({text: $scope.newMessage});
-          $scope.newMessage = '';
+        $scope.add = function () {
+          $scope.items.push({item: $scope.newItem});
+          $scope.newItem = '';
+        };
+        $scope.check = function (index) {
+          $scope.items.set(index);
         };
       });
     </script>
