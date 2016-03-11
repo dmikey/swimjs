@@ -7,7 +7,7 @@ drop-in view controllers that automatically synchronize with the cloud.
 If you can register an event handler, you can architect a realtime app with
 Swim.  
 
-If you want to learn more about Swim, take a look at the README [here](https://github.com/swimit/swim).
+If you want to learn more about how Swim works, you can find out more [here](https://github.com/swimit/swim).
 
 ## Installation
 
