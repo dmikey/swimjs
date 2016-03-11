@@ -32,7 +32,7 @@ sudo apt-get install swimjs
 
 ### Windows
 
-Download [swimjs.zip](https://repo.swim.it/swim-universal/swimjs-0.1.0-alpha1.zip).
+Download [swimjs.zip](https://repo.swim.it/swim-universal/swimjs-0.1.0-alpha1.zip). Uncompress the zip file into an appropriate directory. Add the file called swimjs.bat under the swimjs/bin directory to your Windows PATH variable.
 
 ## Getting Started
 
