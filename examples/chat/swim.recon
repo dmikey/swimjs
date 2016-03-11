@@ -1,0 +1,14 @@
+@server {
+  port: 5619
+  store: "chat.store"
+
+  @route {
+    prefix: "/chat/"
+    service: "chat"
+  }
+}
+
+@service {
+  name: "chat"
+  main: "chat.js"
+}

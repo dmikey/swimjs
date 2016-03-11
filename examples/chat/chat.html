@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html ng-app="chat">
+  <head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+  </head>
+  <body ng-controller="ChatRoom">
+    <h1>Chat</h1>
+    <ul>
+      <li ng-repeat="message in messages.state">
+        <strong>{{message.time | date:'h:mm:ss a'}}</strong>
+        <span>{{message.text}}</span>
+      </li>
+    </ul>
+    <form ng-submit="post()">
+      <input type="text" placeholder="Message" ng-model="newMessage"/>
+      <input type="submit" value="Post"/>
+    </form>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+    <script src="https://repo.swim.it/swim/recon-0.3.9.js"></script>
+    <script src="https://repo.swim.it/swim/swim-client-0.4.5.js"></script>
+    <script>
+      var app = angular.module('chat', []);
+      app.controller('ChatRoom', function ($scope) {
+        $scope.messages = swim.downlink()
+          .node('ws://localhost:5619/chat/public')
+          .lane('chat/room')
+          .onEvent(function (message) {
+            $scope.$apply(); // Update the view.
+          })
+          .syncList();
+        $scope.post = function () {
+          $scope.messages.command({text: $scope.newMessage});
+          $scope.newMessage = '';
+        };
+      });
+    </script>
+  </body>
+</html>

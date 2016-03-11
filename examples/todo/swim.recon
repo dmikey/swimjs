@@ -1,0 +1,14 @@
+@server {
+  port: 5619
+  store: "todo.store"
+
+  @route {
+    prefix: "/todo/"
+    service: "todo"
+  }
+}
+
+@service {
+  name: "todo"
+  main: "todo.js"
+}
