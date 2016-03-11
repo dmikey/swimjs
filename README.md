@@ -357,5 +357,5 @@ setInterval(function () {
 }, 30 * 1000);
 ```   
 
-### What Next?  
+## What Next?  
 To see what a more sophisticated Swim app looks like, check out the [Swim Examples repository](https://github.com/swimit/swim-examples).
