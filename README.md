@@ -22,7 +22,7 @@ brew install swimjs
 
 ### Linux
 
-`swimjs` is available as a `deb` package for Linux systems.
+`swimjs` is available as a `deb` package for Linux systems. Swim requires Java8, please ensure that Java 8 is your default java version.
 
 ```sh
 gpg --keyserver pgpkeys.mit.edu --recv-key 7015E74D1C9EB5D6
