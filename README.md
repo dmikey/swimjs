@@ -5,7 +5,9 @@ platform.  Swim makes it easy to build realtime applications that transcend
 client and server.  Create cloud services that mirror client features, and
 drop-in view controllers that automatically synchronize with the cloud.
 If you can register an event handler, you can architect a realtime app with
-Swim.
+Swim.  
+
+If you want to learn more about Swim, take a look at the README [here](https://github.com/swimit/swim).
 
 ## Installation
 
