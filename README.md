@@ -70,18 +70,23 @@ boilerplate.
   <head>
     <meta charset="UTF-8">
     <title>To-Do</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
   </head>
-  <body ng-controller="TodoList">
+  <body ng-controller="TodoList" class="container">
     <h1>To-Do</h1>
-    <ul>
-      <li ng-repeat="item in items.state">
-        <input type="checkbox" ng-model="item.checked" ng-change="check($index)"/>
-        <span>{{item.item}}</span>
-      </li>
+    <ul class="list-group">
+      <a ng-repeat="item in items.state" ng-click="toggle($index)" class="list-group-item">
+        <span ng-if="!item.checked" class="glyphicon glyphicon-unchecked"></span>
+        <span ng-if="item.checked" class="glyphicon glyphicon-check"></span>
+        {{item.item}}
+        <button ng-click="remove($index)" type="button" class="close">&times;</button>
+      </a>
     </ul>
-    <form ng-submit="add()">
-      <input type="text" placeholder="To-Do" ng-model="newItem"/>
-      <input type="submit" value="Add"/>
+    <form ng-submit="add()" class="input-group">
+      <input type="text" ng-model="newItem" placeholder="To-Do" class="form-control"/>
+      <span class="input-group-btn">
+        <input type="submit" value="Add" class="btn btn-default"/>
+      </span>
     </form>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
     <script src="https://repo.swim.it/swim/recon-0.3.9.js"></script>
@@ -100,8 +105,16 @@ boilerplate.
           $scope.items.push({item: $scope.newItem});
           $scope.newItem = '';
         };
-        $scope.check = function (index) {
+        $scope.toggle = function (index) {
+          var item = $scope.items.get(index);
+          item.checked = !item.checked;
+          $scope.items.set(index, item)
+        }
+        $scope.update = function (index) {
           $scope.items.set(index);
+        };
+        $scope.remove = function (index) {
+          $scope.items.splice(index, 1);
         };
       });
     </script>
