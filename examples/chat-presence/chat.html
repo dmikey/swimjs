@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html ng-app="chat">
+  <head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
+  </head>
+  <body ng-controller="ChatRoom" class="container">
+    <h1>Chat</h1>
+    <form ng-if="!signedIn" ng-submit="signIn()" class="form-inline">
+      <!-- Sign-In form -->
+      <input type="email" ng-model="$parent.emailInput" class="form-control" placeholder="Email"/>
+      <input type="text" ng-model="$parent.nameInput" class="form-control" placeholder="Name"/>
+      <button type="submit" class="btn btn-default">Sign-In</button>
+    </form>
+    <div ng-if="signedIn" class="row">
+      <div class="col-md-8" style="margin-bottom: 1em;">
+        <div style="margin-bottom: 1em;">
+          <div ng-repeat="message in messages.state" class="media">
+            <!-- Chat message -->
+            <h4 class="media-heading">{{message.from}} <small>{{message.time | date:'h:mm:ss a'}}</small></h4>
+            <p class="media-body">{{message.text}}</p>
+          </div>
+          <div ng-repeat="user in users.state" ng-if="user.typing &amp;&amp; user.email !== emailInput" class="media" style="opacity: 0.5;">
+            <!-- User is typing -->
+            <h4 class="media-heading">{{user.email}} <small>{{user.typingTime | date:'h:mm:ss a'}}</small></h4>
+            <p class="media-body"> . . .</p>
+          </div>
+        </div>
+        <form ng-submit="post()" class="input-group">
+          <!-- Chat input form -->
+          <input type="text" ng-model="$parent.chatInput" ng-change="chatInputChanged()" placeholder="Message" class="form-control"/>
+          <span class="input-group-btn">
+            <input type="submit" value="Post" class="btn btn-default"/>
+          </span>
+        </form>
+      </div>
+      <div class ="col-md-4">
+        <div class="panel panel-default">
+          <!-- User list -->
+          <div class="panel-heading">Users</div>
+          <ul class="list-group">
+            <li ng-repeat="user in users.state" class="list-group-item">{{user.email}}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+    <script src="https://repo.swim.it/swim/recon-0.3.9.js"></script>
+    <script src="https://repo.swim.it/swim/swim-client-0.4.5.js"></script>
+    <script>
+      var app = angular.module('chat', []);
+      app.controller('ChatRoom', function ($scope) {
+        // Use swim scopes to simplify downlink management
+        var host = swim.host('ws://localhost:5619');
+        var chat;
+
+        // Prefill sign-in fields from local storage
+        $scope.emailInput = localStorage.getItem('email');
+        $scope.nameInput = localStorage.getItem('name');
+
+        $scope.signedIn = false;
+        $scope.signIn = function () {
+          // Update local storage with sign-in fields
+          localStorage.setItem('email', $scope.emailInput);
+          localStorage.setItem('name', $scope.nameInput);
+          if (!$scope.emailInput) return;
+
+          // Authorize swim connections with unauthenticated credentials
+          host.authorize({email: $scope.emailInput, name: $scope.nameInput});
+          // Swim supports Google sign-in (https://developers.google.com/identity/sign-in/web/)
+          // for user authentication in production environments.
+          //host.authorize({googleIdToken: googleUser.getAuthResponse().id_token});
+
+          // Create a node scope to manage downlinks to a chat service.
+          // Replace static URI with a variable one to support multiple chatrooms.
+          chat = host.node('/chat/public');
+          $scope.signedIn = true;
+          console.log('Signed-in as ' + $scope.emailInput);
+
+          // Create downlinks to the chat service.
+          linkChat();
+        };
+
+        function linkChat() {
+          // Create a synchronized list downlink to the chat/room lane.
+          $scope.messages = chat.downlink()
+            .lane('chat/room')
+            .onEvent(function (message) {
+              $scope.$apply(); // Update the view
+            })
+            .syncList();
+
+          // Create a synchronized map downlink to the chat/users lane.
+          $scope.users = chat.downlink()
+            .lane('chat/users')
+            .primaryKey('email')
+            .onEvent(function (message) {
+              $scope.$apply(); // update the view
+            })
+            .syncMap();
+        }
+
+        $scope.post = function () {
+          // Send a command to the chat/room lane via the messages downlink
+          $scope.messages.command({text: $scope.chatInput});
+          $scope.chatInput = '';
+          $scope.chatInputChanged();
+        };
+
+        $scope.chatInputChanged = function () {
+          // Track chat input to show typing state to other users
+          if (!$scope.chatInputTyping && $scope.chatInput) {
+            // When user is typing
+            $scope.chatInputTyping = true;
+            chat.command('chat/input', [{'@typing': true}]);
+          } else if ($scope.chatInputTyping && !$scope.chatInput) {
+            // When user has not entered any text but is in the text box
+            $scope.chatInputTyping = false;
+            chat.command('chat/input', [{'@typing': false}]);
+          }
+        };
+      });
+    </script>
+  </body>
+</html>

@@ -3,18 +3,21 @@
   <head>
     <meta charset="UTF-8">
     <title>Chat</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
   </head>
-  <body ng-controller="ChatRoom">
+  <body ng-controller="ChatRoom" class="container">
     <h1>Chat</h1>
-    <ul>
-      <li ng-repeat="message in messages.state">
-        <strong>{{message.time | date:'h:mm:ss a'}}</strong>
-        <span>{{message.text}}</span>
-      </li>
-    </ul>
-    <form ng-submit="post()">
-      <input type="text" placeholder="Message" ng-model="newMessage"/>
-      <input type="submit" value="Post"/>
+    <div style="margin-bottom: 1em;">
+      <div ng-repeat="message in messages.state" class="media">
+        <h4 class="media-heading"><small>{{message.time | date:'h:mm:ss a'}}</small></h4>
+        <p class="media-body">{{message.text}}</p>
+      </div>
+    </div>
+    <form ng-submit="post()" class="input-group">
+      <input type="text" ng-model="newMessage" placeholder="Message" class="form-control"/>
+      <span class="input-group-btn">
+        <input type="submit" value="Post" class="btn btn-default"/>
+      </span>
     </form>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
     <script src="https://repo.swim.it/swim/recon-0.3.9.js"></script>
