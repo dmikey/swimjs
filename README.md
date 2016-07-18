@@ -43,7 +43,7 @@ sudo apt-get install swimjs
 
 ### Windows
 
-Download [swimjs for Windows](https://repo.swim.it/swim-universal/swimjs-0.1.0-alpha3.zip).
+Download [swimjs for Windows](https://github.com/swimit/swim/raw/master/repo/swimjs-0.1.0-alpha3.zip).
 Uncompress the zip file into an appropriate directory. Add the file called
 swimjs.bat under the swimjs/bin directory to your Windows PATH variable. Swim
 requires Java8 which can be
